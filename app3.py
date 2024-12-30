@@ -9,6 +9,7 @@ from wordcloud import WordCloud
 import matplotlib.font_manager as fm
 import seaborn as sns
 import validators
+from bs4 import BeautifulSoup
 
 
 # 设置字体路径，确保该路径指向一个有效的中文字体
@@ -37,6 +38,22 @@ def remove_punctuation(text):
     return re.sub(r'\s+|[^\w\s]|_', '', text)
 
 
+def extract_body_section(html, selector):
+    """
+    提取 Body 中的某一部分内容
+    :param html: 原始 HTML 内容
+    :param selector: 提取规则，例如：CSS 选择器或者自定义的正则表达式
+    :return: 提取的部分内容
+    """
+    soup = BeautifulSoup(html, 'html.parser')
+    # 使用 BeautifulSoup 的 select 方法根据 CSS 选择器提取内容
+    selected_elements = soup.select(selector)
+    extracted_content = ''
+    for element in selected_elements:
+        extracted_content += str(element)
+    return extracted_content
+
+
 # 生成词云图
 def generate_wordcloud(word_counts):
     wordcloud = WordCloud(font_path=font_path, width=400, height=200,
@@ -55,6 +72,8 @@ def main():
 
     # 侧边栏输入 URL
     url = st.sidebar.text_input("输入文章的 URL:", placeholder="https://example.com")
+    # 输入提取规则，例如：CSS 选择器或自定义的正则表达式
+    selector = st.sidebar.text_input("输入提取规则:", placeholder=".article-body")
 
     # 选择图型
     chart_type = st.sidebar.selectbox("选择可视化图型:",
@@ -76,6 +95,8 @@ def main():
         try:
             # 抓取 HTML 内容
             html = fetch_content(url)
+            # 提取 Body 中的部分内容
+            html = extract_body_section(html, selector)
             clean_text = remove_html_tags(html)  # 去除 HTML 标签
             clean_text = remove_punctuation(clean_text)  # 去除标点符号
             words = jieba.lcut(clean_text)  # 分词
