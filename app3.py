@@ -73,7 +73,7 @@ def main():
     # 侧边栏输入 URL
     url = st.sidebar.text_input("输入文章的 URL:", placeholder="https://example.com")
     # 输入提取规则，例如：CSS 选择器或自定义的正则表达式
-    selector = st.sidebar.text_input("输入提取规则:", placeholder=".article-body")
+    selector = st.sidebar.text_input("输入提取规则:", placeholder="news")
 
     # 选择图型
     chart_type = st.sidebar.selectbox("选择可视化图型:",
