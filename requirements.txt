@@ -6,3 +6,4 @@ wordcloud
 jieba  
 seaborn  
 validators
+BeautifulSoup
